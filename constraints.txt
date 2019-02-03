@@ -19,6 +19,7 @@ Pygments==2.3.1
 pyparsing==2.3.1
 pytz==2018.9
 recommonmark==0.5.0
+reportlab==3.5.13
 requests==2.21.0
 seqdiag==0.9.6
 six==1.12.0

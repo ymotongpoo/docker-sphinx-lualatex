@@ -1,5 +1,6 @@
 Sphinx
 recommonmark
+reportlab
 sphinxcontrib-textstyle
 sphinxcontrib-blockdiag
 sphinxcontrib-nwdiag
