@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ubuntu:18.04 as builder
+FROM python:3.7.4-slim-buster
 LABEL maintainer Yoshi Yamaguchi <ymotongpoo+docker@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
@@ -33,30 +33,53 @@ ENV PERSISTENT_DEPS \
     bash \
     git
 ENV PATH $TEXLIVE_PATH/bin/x86_64-linux:$PATH
-ENV SOURCE_HAN_SANS_URL https://github.com/adobe-fonts/source-han-sans/raw/release/SubsetOTF/SourceHanSansJP.zip 
+ENV SOURCE_HAN_SANS_URL https://github.com/adobe-fonts/source-han-sans/raw/release/SubsetOTF/SourceHanSansJP.zip
 ENV SOURCE_HAN_SERIF_URL https://github.com/adobe-fonts/source-han-serif/raw/release/SubsetOTF/SourceHanSerifJP.zip
 ENV TEXLIVE_URL http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
 ENV SPHINX_DEPS \
     build-essential \
-    wget \
-    python3 \
-    python3-dev \
-    libjpeg-dev \
-    zlib1g-dev \
-    libfreetype6 \
-    libfreetype6-dev
-ENV PIP_INSTALLER_URL https://bootstrap.pypa.io/get-pip.py
-ENV PYTHON_PIP_VERSION 19.0.1
+    zip
+ENV TEX_PACKAGES \
+    latexmk \
+    collection-luatex \
+    collection-langjapanese \
+    collection-fontsrecommended \
+    type1cm \
+    mdframed \
+    needspace \
+    fontaxes \
+    boondox \
+    everyhook \
+    svn-prov \
+    framed \
+    placeins \
+    adjustbox \
+    collectbox \
+    fncychap \
+    sourcesanspro \
+    sourceserifpro \
+    cm-unicode \
+    titlesec \
+    tabulary \
+    varwidth \
+    wrapfig \
+    capt-of
 
-# Install basic dependencies
+# Install basic dependencies and Sphinx dependencies
 RUN apt-get -qq update \
     && apt-get install -y --no-install-recommends -q \
-         $PERSISTENT_DEPS
+         $PERSISTENT_DEPS \
+         ${SPHINX_DEPS}
+
+# Install Sphinx and dependent pacakges
+COPY requirements.txt .
+COPY constraints.txt .
+RUN python3.7 -m pip install -r requirements.txt -c constraints.txt
 
 # Setup fonts
 RUN mkdir -p $FONT_PATH && \
     apt-get install -y --no-install-recommends -q $FONT_DEPS && \
-    wget --no-check-certificate $SOURCE_HAN_SANS_URL && \ 
+    wget --no-check-certificate $SOURCE_HAN_SANS_URL && \
       unzip SourceHanSansJP.zip && \
       cp SourceHanSansJP/*.otf $FONT_PATH && \
       rm -rf SourceHanSansJP.zip SourceHanSansJP && \
@@ -83,38 +106,10 @@ RUN apt-get install -y --no-install-recommends -q $TEXLIVE_DEPS \
       "option_src 0" \
       > /tmp/install-tl-unx/texlive.profile \
     && /tmp/install-tl-unx/install-tl -profile /tmp/install-tl-unx/texlive.profile
-   
-RUN tlmgr install \
-      latexmk \
-      collection-luatex \
-      collection-langjapanese \
-      collection-fontsrecommended \
-      type1cm \
-      mdframed \
-      needspace \
-      fontaxes \
-      boondox \
-      everyhook \
-      svn-prov \
-      framed \
-      placeins \
-      adjustbox \
-      collectbox \
-      fncychap \
-      sourcesanspro \
-      sourceserifpro \
-      cm-unicode \
+
+RUN tlmgr install ${TEX_PACKAGES} \
     && luaotfload-tool -u -vvv
 
-# Install Python 3.6
-RUN apt-get install -y --no-install-recommends $SPHINX_DEPS \
-    && wget --no-check-certificate -O get-pip.py $PIP_INSTALLER_URL \
-    && python3 get-pip.py --disable-pip-version-check --no-cache-dir "pip==$PYTHON_PIP_VERSION" \
-    && rm -f get-pip.py \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImporant=false
-COPY requirements.txt .
-COPY constraints.txt .
-RUN pip3 install -r requirements.txt -c constraints.txt
 VOLUME ["/workdir"]
 WORKDIR /workdir
 CMD ["/bin/bash"]

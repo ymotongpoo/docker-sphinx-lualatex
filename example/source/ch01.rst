@@ -1,0 +1,98 @@
+==========
+ テスト
+==========
+
+ああああ
+============
+
+これはテストです。これはテストです。これはテストです。これはテストです。これはテストです。
+これはテストです。これはテストです。これはテストです。これはテストです。これはテストです。
+これはテストです。これはテストです。これはテストです。これはテストです。これはテストです。
+
+
+blockdiag
+============
+
+.. blockdiag::
+   :desctable:
+
+   blockdiag {
+      A -> B -> C;
+      A [description = "browsers in each client"];
+      B [description = "web server"];
+      C [description = "database server"];
+   }
+
+
+.. seqdiag::
+   :desctable:
+
+   seqdiag {
+      A -> B -> C;
+      A [description = "browsers in each client"];
+      B [description = "web server"];
+      C [description = "database server"];
+   }
+
+
+.. actdiag::
+
+    actdiag {
+        write -> convert -> image
+        lane user {
+            label = "User"
+            write [label = "Writing reST"];
+            image [label = "Get diagram IMAGE"];
+        }
+        lane actdiag {
+            convert [label = "Convert reST to Image"];
+        }
+    }
+
+
+.. nwdiag::
+   :desctable:
+
+   nwdiag {
+      network {
+        A [address = 192.168.0.1, description = "web server01"];
+        B [address = 192.168.0.2, description = "web server02"];
+      }
+      network {
+        A [address = 172.0.0.1];
+        C [address = 172.0.0.2, description = "database server"];
+      }
+   }
+
+
+.. rackdiag::
+    :desctable:
+
+    rackdiag {
+        rack {
+            10U
+
+            description = "Rack No. 001 Production";
+
+            1: Switching HUB [0.5A,description="Cisco"]
+            2: Web Server 01 [0.5A,description="HP"]
+            3: Web Server 02 [0.5A,description="HP"]
+            4: Application Server 01 [0.5A,description="HP"]
+            5: Application Server 02 [0.5A,description="HP"]
+            6: DB Server 01 [2U,1A,description="HP"]
+            8: DB Server 02 [2U,1A,description="HP"]
+            10: N/A
+        }
+        rack {
+            10U
+
+            description = "Rack No. 002 Test";
+
+            1: Switching HUB [0.5A,description="Cisco"]
+            2: Web Server [0.5A,description="HP"]
+            3: Application Server [0.5A,description="HP"]
+            4: DB Server [2U,1A,description="HP"]
+            6: N/A [5U]
+        }
+    }
+
