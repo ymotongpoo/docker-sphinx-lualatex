@@ -8,6 +8,12 @@ Dockerfile to create a docker image with the following environment:
 
 For the configuration of `conf.py` for LuaLaTeX, please find an example in `example/source/conf.py`.
 
+# How to try this docker image
+
+```
+$ cd example
+$ docker run -v $PWD:/workdir -t ymotongpoo/sphinx-lualatex:buster-slim-2.2.0 make latexpdf
+```
 
 # Special thanks
 
